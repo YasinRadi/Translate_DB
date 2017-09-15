@@ -1,0 +1,131 @@
+<!-- 
+ *
+ * Created by Yasin Radi <yasin.ben.hamman@gmail.com>
+ *
+-->
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Translate DB</title>
+
+  <!-- Own Styling -->
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+
+  <!-- Bootstrap 3 CSS Styling -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    crossorigin="anonymous">
+</head>
+
+<body>
+  <div class="container">
+    <form class="form-horizontal">
+      <div class="form-group mid-data">
+        <p>Connection data</p>
+        <br />
+        <!-- Username field -->
+        <label for="username" class="col-xs-1">Username:</label>
+        <div class="col-xs-2">
+          <input type="text" class="form-control" name="username" id="username" />
+        </div>
+
+        <!-- Password field -->
+        <label for="password" class="col-xs-1 space">Password:</label>
+        <div class="col-xs-2">
+          <input type="password" class="form-control" name="password" id="password" />
+        </div>
+
+        <!-- Connection env. field -->
+        <label for="connection_env" class="col-xs-2 space">Connection Name:</label>
+        <div class="col-xs-2">
+          <input type="text" class="form-control" name="connection" id="connection_env" />
+        </div>
+      </div>
+      <hr />
+      <div class="form-group mid-data">
+        <p>Query data</p>
+        <br />
+        <!-- Table field -->
+        <label for="table" class="col-xs-1">Table:</label>
+        <div class="col-xs-2">
+          <input type="text" class="form-control" name="table" id="table" />
+        </div>
+
+        <!-- Table field's field -->
+        <label for="table_field" class="col-xs-1 space">Field:</label>
+        <div class="col-xs-2">
+          <input type="text" class="form-control" name="table_field" id="table_field" />
+        </div>
+
+        <!-- Table field's field -->
+        <label for="tmp_table" class="col-xs-2 space">Output table name:</label>
+        <div class="col-xs-2">
+          <input type="text" class="form-control" name="tmp_table" id="tmp_table" />
+        </div>
+      </div>
+      <div class="form-group mid-data">
+
+        <!-- Where condition field -->
+        <label for="condition" class="col-xs-2">Where condition:</label>
+        <div class="col-xs-5">
+          <textarea class="form-control" name="condition" id="condition" rows="4" cols="25"></textarea>
+        </div>
+
+        <!-- PK field's field -->
+        <label for="pk_field" class="col-xs-2 space">Primary Key:</label>
+        <div class="col-xs-2">
+          <input type="text" class="form-control" name="pk_field" id="pk_field" />
+        </div>
+      </div>
+      <hr />
+      <div class="form-group mid-data">
+        <p>Translation data</p>
+        <br />
+
+        <!-- Origin Language field -->
+        <label for="orig_lang" class="col-xs-2">Origin language:</label>
+        <div class="col-xs-1">
+          <input type="text" class="form-control" name="orig_lang" id="orig_lang" maxlength="2" />
+        </div>
+
+        <!-- Target Language field -->
+        <label for="targ_lang" class="col-xs-2 space">Target language:</label>
+        <div class="col-xs-1">
+          <input type="text" class="form-control" name="targ_lang" id="targ_lang" maxlength="2" />
+        </div>
+
+        <!-- Maximum field length -->
+        <label for="max_length" class="col-xs-2 space">Column length:</label>
+        <div class="col-xs-1">
+          <input type="text" class="form-control" name="max_length" id="max_length" />
+        </div>
+      </div>
+      <hr />
+      <!-- Progress status information -->
+      <div id="status" class="start">
+        <progress id="progBar" value="0" max="100"></progress>
+        <span id="progressStatus"></span>
+      </div>
+
+      <!-- Translate button --> 
+      <div class="end">
+        <button id="translate" type="button" class="btn btn-primary btn-lg">Translate</button>
+      </div>
+    </form>
+  </div>
+</body>
+<script>
+  if (typeof module === 'object') {
+    window.module = module
+    module = undefined
+  }
+</script>
+<script>
+  require('../renderer.js')
+</script>
+<script>
+  if (window.module) module = window.module
+</script>
+
+</html>

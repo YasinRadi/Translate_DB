@@ -1,0 +1,21 @@
+{
+  "name": "translate-db",
+  "version": "0.0.1",
+  "description": "Simple UI application to translate a db table column and dump it into a tmp table.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "",
+  "keywords": [],
+  "author": "Yasin Radi",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "~1.6.2"
+  },
+  "dependencies": {
+    "electron-rebuild": "^1.6.0",
+    "google-translate-api": "^2.3.0",
+    "oracledb": "^1.13.1"
+  }
+}

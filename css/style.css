@@ -1,0 +1,77 @@
+/*
+ * Created by Yasin Radi <yasin.ben.hamman@gmail.com>
+ */
+
+/* Containers */
+body {
+    background-color: #c5c6c9!important;
+    padding: 0.1px;
+}
+
+.container {
+    margin: 20px 30px 30px 0;
+    background-color: #ffffff;
+    border-radius: 10px;
+    overflow: auto;
+}
+
+form {
+    width: 90%;
+    margin-left: 50px;
+}
+
+/* Elements */
+p {
+    font-size: 18px;
+    margin-left: 10px!important;
+    font-weight: bold;
+}
+
+label {
+    font-size: 16px;
+    margin-top: 3px;
+}
+
+textarea {
+    resize: vertical;
+    max-height: 300px;
+}
+
+progress {
+    vertical-align: middle!important;
+}
+
+span {
+    margin-left: 20px;
+}
+
+/* IDS */
+#status {
+    float: left;
+    margin: 40px 0 0 0;
+    width: 500px;
+}
+
+/* Classes */
+.mid-data {
+    margin: 40px 0 10px 30px;
+}
+
+.space {
+    margin-left: 50px;
+}
+
+.in-label {
+    margin-left: 15px;
+    float: left;
+}
+
+.start {
+    display: none;
+}
+
+.end {
+    float: right;
+    margin: 20px 90px 0 0;
+    padding-bottom: 30px;
+}
