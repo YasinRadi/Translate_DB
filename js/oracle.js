@@ -260,7 +260,7 @@ class Oracle {
    * @param {string} value 
    */
   processValueQuotes(value) {
-    return value.replace(/'/g, "''")
+    return value.replace(/'/g, "''").replace(/@ /g, "@")
   }
 
   /**
