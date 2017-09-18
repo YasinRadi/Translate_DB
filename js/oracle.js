@@ -187,10 +187,7 @@ class Oracle {
     const cn = await this.connection
     updater.setCreatingText()
     const where = this.condition === '' ? '' : `WHERE ${this.condition}`
-    return cn.execute(`CREATE TABLE ${this.tmp} AS (SELECT * FROM ${this.table} ${where})`).catch(err => {
-      cn.rollback()
-      throw new Error(err)
-    })
+    return cn.execute(`CREATE TABLE ${this.tmp} AS (SELECT * FROM ${this.table} ${where})`)
   }
 
   /**
@@ -279,7 +276,6 @@ class Oracle {
   closeConnection() {
     this.connection.then(cn => {
       cn.close()
-      console.log('connection closed')
     })
   }
 }

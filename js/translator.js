@@ -8,10 +8,11 @@ const updater   = require('./formUpdater')
 
 class Translator {
 
-  constructor(data, origin, target) {
+  constructor(data, origin, langs, target) {
     this._data = data
-    this._lang = { to: target }
-    if (origin) this._lang.from = origin
+    this._langs = langs
+    this.langs.splice(0, 0, origin.toLowerCase())
+    this.langs.push(target.toLowerCase())
   }
 
   /**
@@ -25,12 +26,12 @@ class Translator {
     this._data = data
   }
 
-  get lang() {
-    return this._lang
+  get langs() {
+    return this._langs
   }
 
-  set lang(lang) {
-    this._lang = lang
+  set langs(langs) {
+    this._langs = langs
   }
 
   /**
@@ -38,19 +39,40 @@ class Translator {
    * @returns {Promise}
    */
   translate() {
+    updater.disableTranslateBtn()
+    return this.translateTo()
+  }
+
+  /**
+   * Recursive translation using each language specified, from origin, through mid languages and finishing into target lang.
+   * @returns {Promise|String[]}
+   */
+  async translateTo() {
+    this.lang = {from: this.langs[0], to: this.langs[1]}
+    this.data = await this.translateStd()
+    this.langs.shift()
+    return this.langs.length <= 1
+      ? Promise.resolve(this.data)
+      : this.translateTo()
+  }
+
+  /**
+   * Translate in a regular way
+   * @returns {Promise}
+   */
+  translateStd(lang){
     let result = []
     let promise = Promise.resolve()
 
     updater.setProgressBar(this.data.length)
     updater.setTranslatingText()
-    updater.enableDisableTranslateBtn()
     
     let i = 1
     for (const d of this.data) {
       promise = promise.then(() => translate(d.value, this.lang))
         .then(res => {
           result.push({ id: d.id, value: res.text })
-          updater.setTranslatingTextNumbers(i, this.data.length)
+          updater.setTranslatingTextNumbers(this.lang.to, i, this.data.length)
           updater.updateProgressBar()
           i++
         })
