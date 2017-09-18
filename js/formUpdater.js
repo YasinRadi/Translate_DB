@@ -7,6 +7,7 @@ const bar = document.getElementById('progBar')
 const txt = document.getElementById('progressStatus')
 const btn = document.getElementById('translate')
 const div = document.getElementById('status')
+const lng = document.getElementById('mid_lang')
 
 class FormUpdater {
   
@@ -43,8 +44,8 @@ class FormUpdater {
    * @param {number} current 
    * @param {number} total 
    */
-  static setTranslatingTextNumbers(current, total) {
-    txt.textContent = `Translating values... (${current} / ${total})`
+  static setTranslatingTextNumbers(lang, current, total) {
+    txt.textContent = `Translating values to ${lang}... (${current} / ${total})`
   }
 
   /**
@@ -73,8 +74,12 @@ class FormUpdater {
   /**
    * Enable or disable translate button depending on its state
    */
-  static enableDisableTranslateBtn() {
-    btn.disabled = !btn.disabled
+  static disableTranslateBtn() {
+    btn.disabled = true
+  }
+
+  static enableTranslateBtn() {
+    btn.disabled = false
   }
 
   /**
@@ -87,11 +92,29 @@ class FormUpdater {
   static taskFinished() {
     bar.setAttribute('value', 0)
     FormUpdater.setCompleteText()
-    FormUpdater.enableDisableTranslateBtn()
+    FormUpdater.enableTranslateBtn()
     setTimeout(() => {
       txt.textContent = ''
       div.className = 'start'
     }, 3000)
+  }
+
+  /**
+   * Process mid languages into an array
+   * @returns {string[]}
+   */
+  static processLangArray(lngs) {
+    return lngs.split(',').map((l) => l.toLowerCase().trim())
+  }
+
+  /**
+   * Alert the user about the error and remove the progress bar and its status text
+   * @param {string} err 
+   */
+  static processError(err) {
+    div.className = 'start'
+    FormUpdater.enableTranslateBtn()
+    alert(err)
   }
 }
 
