@@ -22,6 +22,7 @@ document.getElementById('translate').addEventListener('click', () => {
     pk_field: document.getElementById('pk_field').value,
     f_lang: document.getElementById('orig_lang').value,
     t_lang: document.getElementById('targ_lang').value,
+    m_lang: document.getElementById('mid_lang').value,
     max_length: document.getElementById('max_length').value
   }
 
@@ -40,37 +41,52 @@ document.getElementById('translate').addEventListener('click', () => {
     data.max_length
   )
 
-  try {
-    /**
-    * Fetches the data from the db table using the PK and the specified field
-    */
-    ora.getDataToTranslate().then(res => {
-
+  /**
+  * Fetches the data from the db table using the PK and the specified field
+  */
+  ora.getDataToTranslate()
+    .then(res => {
       /**
        * Processes the fetched data converting it into an Object[] having {id, value}
        */
-      ora.processDataArray(res.rows).then(tData => {
-
-        /**
-         * Translate object creation
-         */
-        const tr = new Translate(tData, data.f_lang, data.t_lang)
-
-        /**
-         * Executes the translation of every table row
-         */
-        tr.translate().then(translatedData => {
+      ora.processDataArray(res.rows)
+        .then(tData => {
           /**
-           * Creates the temporary table and updates the values according to the new translation
+           * Translate object creation
            */
-          ora.outputResult(translatedData).then(() => {
-            alert(`Translation successful. Data has been output in table ${ora.tmp}.`)
-            updater.taskFinished()
-          })
+          const tr = new Translate(
+            tData,
+            data.f_lang,
+            updater.processLangArray(data.m_lang),
+            data.t_lang
+          )
+
+          /**
+           * Executes the translation of every table row
+           */
+          tr.translate()
+            .then(translatedData => {
+              /**
+               * Creates the temporary table and updates the values according to the new translation
+               */
+              ora.outputResult(translatedData)
+                .then(() => {
+                  alert(`Translation successful. Data has been output in table ${ora.tmp}.`)
+                  updater.taskFinished()
+                })
+                .catch(err => {
+                  updater.processError(err)
+                })
+            })
+            .catch(err => {
+              updater.processError(err)
+            })
         })
-      })
+        .catch(err => {
+          updater.processError(err)
+        })
     })
-  } catch (err) {
-    alert(err)
-  }
+    .catch(err => {
+      updater.processError(err)
+    })
 })
