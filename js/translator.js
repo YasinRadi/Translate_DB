@@ -11,7 +11,7 @@ class Translator {
   constructor(data, origin, langs, target) {
     this._data = data
     this._langs = langs
-    this.langs.splice(0, 0, origin.toLowerCase())
+    this.langs.splice(0, 0, origin === '' ? 'auto' : origin.toLowerCase())
     this.langs.push(target.toLowerCase())
   }
 
