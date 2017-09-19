@@ -6,6 +6,8 @@
 const Oracle = require('./oracle')
 const Translate = require('./translator')
 const updater = require('./formUpdater')
+const Validator = require('./validator')
+const validate = new Validator()
 
 /**
  * Adds the onClick event to the Translate button to fetch and translate the data.
@@ -24,6 +26,15 @@ document.getElementById('translate').addEventListener('click', () => {
     t_lang: document.getElementById('targ_lang').value,
     m_lang: document.getElementById('mid_lang').value,
     max_length: document.getElementById('max_length').value
+  }
+
+  /**
+   * User input validation
+   */
+  const validation = validate.validate()
+  if(typeof validation === 'string') {
+    alert(validation)
+    return
   }
 
   /**

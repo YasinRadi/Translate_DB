@@ -7,6 +7,11 @@ const menu = Menu.buildFromTemplate([
     label: 'File',
     submenu: [
       {
+        label: 'Reload',
+        accelerator: process.platform === 'darwin' ? 'Command+R' : 'Ctrl+R',
+        role: 'reload'
+      },
+      {
         label: 'Exit',
         accelerator: process.platform === 'darwin' ? 'Command+Q' : 'Ctrl+Q',
         role: 'close'
