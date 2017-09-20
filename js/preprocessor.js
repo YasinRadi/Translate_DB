@@ -4,6 +4,7 @@
 'use strict'
 
 const FileHandler = require('./fileHandler')
+const FormUpdater = require('./formUpdater')
 const fh = new FileHandler()
 
 
@@ -14,6 +15,9 @@ class Preprocessor {
     this._no_translate = this.readNonTranslationFile()
   }
 
+  /**
+   * Public properties
+   */
   get path() {
     return this._path
   }
@@ -51,6 +55,7 @@ class Preprocessor {
    * @param {string[]} data 
    */
   process(data) {
+    FormUpdater.setPreprocessText()
     return data.filter(this.isElementNotIncluded.bind(this))
   }
 }
