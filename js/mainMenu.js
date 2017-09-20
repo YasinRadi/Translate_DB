@@ -1,3 +1,6 @@
+/**
+ * Created by Yasin Radi <yasin.ben.hamman@gmail.com>
+ */
 'use strict'
 
 const { Menu, dialog } = require('electron').remote
@@ -9,13 +12,15 @@ const menu = Menu.buildFromTemplate([
     label: 'File',
     submenu: [
       {
-        label: 'Open Non translations file...',
+        label: 'Open non translation file...',
+        accelerator: process.platform === 'darwin' ? 'Command+T' : 'Ctrl+T',
         click: () => {
           fh.setOpeningFunction('non_tra')
         }
       },
       {
-        label: 'Open Replace translations file...',
+        label: 'Open replace translation file...',
+        accelerator: process.platform === 'darwin' ? 'Command+R' : 'Ctrl+R',
         click: () => {
           fh.setOpeningFunction('post_proc')
         }
@@ -25,7 +30,7 @@ const menu = Menu.buildFromTemplate([
       },
       {
         label: 'Reload',
-        accelerator: process.platform === 'darwin' ? 'Command+R' : 'Ctrl+R',
+        accelerator: process.platform === 'darwin' ? 'Command+D' : 'Ctrl+D',
         role: 'reload'
       },
       {

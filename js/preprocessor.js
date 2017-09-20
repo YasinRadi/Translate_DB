@@ -1,14 +1,17 @@
 /**
  * Created by Yasin Radi <yasin.ben.hamman@gmail.com>
  */
-const fs = require('fs')
+'use strict'
+
+const FileHandler = require('./fileHandler')
+const fh = new FileHandler()
 
 
 class Preprocessor {
 
   constructor(path) {
     this._path  = path
-    this._no_translate = this.readFile()
+    this._no_translate = this.readNonTranslationFile()
   }
 
   get path() {
@@ -28,19 +31,27 @@ class Preprocessor {
   }
 
   /**
-   * Reads file content synchronously
+   * Reads the specified non translation file and returns the array contained
    * @returns {string[]}
    */
-  readFile() {
-    return JSON.parse(fs.readFileSync(this.path, 'utf-8')).no_translate
+  readNonTranslationFile() {
+    return fh.readFile(this.path).no_translation
+  }
+
+  /**
+   * Checks if the value of the param element is in the no_translate[]
+   * @param {Object} element 
+   */
+  isElementNotIncluded(element) {
+    return !this.no_translate.includes(element.value)
   }
 
   /**
    * Filter out data that should not be translated
    * @param {string[]} data 
    */
-  preProcess(data) {
-    return data.filter((l) => !this.no_translate.includes(l.value))
+  process(data) {
+    return data.filter(this.isElementNotIncluded.bind(this))
   }
 }
 

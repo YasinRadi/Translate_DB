@@ -9,6 +9,7 @@ const Translate = require('./translator')
 const updater = require('./formUpdater')
 const Validator = require('./validator')
 const Preprocessor = require('./preprocessor')
+const Postprocessor = require('./postprocessor')
 const validate = new Validator()
 const FileHandler = require('./fileHandler')
 const fh = new FileHandler()
@@ -49,6 +50,11 @@ document.getElementById('translate').addEventListener('click', () => {
   const preprocessor = data.non_tra.value ? new Preprocessor(data.non_tra.value) : undefined
 
   /**
+   * Postprocessor object setting
+   */
+  const postprocessor = data.post_proc.value ? new Postprocessor(data.post_proc.value) : undefined
+
+  /**
    * Oracle db object creation
    */
   const ora = new Oracle(
@@ -77,7 +83,7 @@ document.getElementById('translate').addEventListener('click', () => {
           /**
            * Exclude non-translatable lines
            */
-          const tr_data = preprocessor !== undefined ? preprocessor.preProcess(tData) : tData
+          const tr_data = preprocessor !== undefined ? preprocessor.process(tData) : tData
 
           /**
            * Translate object creation
@@ -94,10 +100,16 @@ document.getElementById('translate').addEventListener('click', () => {
            */
           tr.translate()
             .then(translatedData => {
+
+              /**
+               * Perform post-translation operations
+               */
+              const translated_data = postprocessor !== undefined ? postprocessor.process(translatedData) : translatedData
+
               /**
                * Creates the temporary table and updates the values according to the new translation
                */
-              ora.outputResult(translatedData)
+              ora.outputResult(translated_data)
                 .then(() => {
                   alert(`Translation successful. Data has been output in table ${ora.tmp}.`)
                   updater.taskFinished()
