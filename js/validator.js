@@ -123,6 +123,16 @@ class Validator {
     
     return true
   }
+
+  /**
+   * Extracts the name of the file path and the extension from it.
+   * @param {string} path
+   * @returns {bool} 
+   */
+  checkExtension(path) {
+    return path.replace(/^.*(\\|\/|\:)/, '')
+      .split('.')[1] === 'json'
+  }
 }
 
 module.exports = Validator
