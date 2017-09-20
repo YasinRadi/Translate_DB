@@ -4,6 +4,7 @@
 'use strict'
 
 const FileHandler = require('./fileHandler')
+const FormUpdater = require('./formUpdater')
 const fh = new FileHandler()
 
  class Postprocessor {
@@ -13,6 +14,9 @@ const fh = new FileHandler()
     this._lines = this.readReplaceTranslationsFile()
   }
 
+  /**
+   * Public properties
+   */
   get path() {
     return this._path
   }
@@ -43,6 +47,7 @@ const fh = new FileHandler()
    * @returns {Object[]}
    */
   process(data) {
+    FormUpdater.setPostprocessText()
     return data.map((d) => {
       this.lines.forEach((l) => {
         d.value = d.value.replace(

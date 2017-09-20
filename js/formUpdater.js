@@ -72,12 +72,29 @@ class FormUpdater {
   }
 
   /**
-   * Enable or disable translate button depending on its state
+   * Set progress status text to pre-process information
+   */
+  static setPreprocessText() {
+    txt.textContent = `Pre-processing values...`
+  }
+
+  /**
+   * Set progress status text to post-process information
+   */
+  static setPostprocessText() {
+    txt.textContent = `Post-processing values...`
+  }
+
+  /**
+   * Disables translate button
    */
   static disableTranslateBtn() {
     btn.disabled = true
   }
 
+  /**
+   * Enables translate button
+   */
   static enableTranslateBtn() {
     btn.disabled = false
   }
@@ -89,6 +106,9 @@ class FormUpdater {
     txt.textContent = 'Complete!'
   }
 
+  /**
+   * Informs that task has been completed successfully and resets progress ui
+   */
   static taskFinished() {
     bar.setAttribute('value', 0)
     FormUpdater.setCompleteText()
