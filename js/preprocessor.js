@@ -1,7 +1,10 @@
 /**
  * Created by Yasin Radi <yasin.ben.hamman@gmail.com>
  */
+'use strict'
+
 const FileHandler = require('./fileHandler')
+const FormUpdater = require('./formUpdater')
 const fh = new FileHandler()
 
 
@@ -9,9 +12,12 @@ class Preprocessor {
 
   constructor(path) {
     this._path  = path
-    this._no_translate = this.readNonTranslate()
+    this._no_translate = this.readNonTranslationFile()
   }
 
+  /**
+   * Public properties
+   */
   get path() {
     return this._path
   }
@@ -29,19 +35,28 @@ class Preprocessor {
   }
 
   /**
-   * Reads a non translations file
-   * @returns {string}
+   * Reads the specified non translation file and returns the array contained
+   * @returns {string[]}
    */
-  readNonTranslate() {
+  readNonTranslationFile() {
     return fh.readFile(this.path).no_translation
+  }
+
+  /**
+   * Checks if the value of the param element is in the no_translate[]
+   * @param {Object} element 
+   */
+  isElementNotIncluded(element) {
+    return !this.no_translate.includes(element.value)
   }
 
   /**
    * Filter out data that should not be translated
    * @param {string[]} data 
    */
-  preProcess(data) {
-    return data.filter((l) => !this.no_translate.includes(l.value))
+  process(data) {
+    FormUpdater.setPreprocessText()
+    return data.filter(this.isElementNotIncluded.bind(this))
   }
 }
 

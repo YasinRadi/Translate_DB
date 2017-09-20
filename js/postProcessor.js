@@ -1,7 +1,10 @@
 /**
  * Created by Yasin Radi <yasin.ben.hamman@gmail.com
  */
+'use strict'
+
 const FileHandler = require('./fileHandler')
+const FormUpdater = require('./formUpdater')
 const fh = new FileHandler()
 
  class Postprocessor {
@@ -11,6 +14,9 @@ const fh = new FileHandler()
     this._lines = this.readReplaceTranslationsFile()
   }
 
+  /**
+   * Public properties
+   */
   get path() {
     return this._path
   }
@@ -27,11 +33,21 @@ const fh = new FileHandler()
     this._lines = lines
   }
 
+  /**
+   * Reads the replace translation file using the specified path and returns the array contained in it.
+   * @returns {Object[]}
+   */
   readReplaceTranslationsFile() {
     return fh.readFile(this.path).replace_translation
   }
 
-  postProcess(data) {
+  /**
+   * Replaces each specified value in the replacing file from each data row
+   * @param {Object[]} data 
+   * @returns {Object[]}
+   */
+  process(data) {
+    FormUpdater.setPostprocessText()
     return data.map((d) => {
       this.lines.forEach((l) => {
         d.value = d.value.replace(
