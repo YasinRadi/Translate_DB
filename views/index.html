@@ -105,16 +105,27 @@
       <div class="form-group mid-data">
         <!-- Intermidiate languages field -->
         <label for="mid_lang" class="col-xs-2">Mid languages:</label>
-        <div class="col-xs-3">
+        <div class="col-xs-8">
           <input type="text" class="form-control" name="Mid languages" id="mid_lang" />
         </div>
-
+      </div>
+      <div class="form-group mid-data">
+        
         <!-- Non translation file field -->
-        <label for="non_tra" class="col-xs-2">Non transl. file:</label>
-        <div class="col-xs-4">
-          <input type="file" class="form-control" name="no_trans_file" id="non_tra" />
+        <label for="non_tra" class="col-xs-3">Non translations file:</label>
+        <div class="col-xs-7">
+          <input type="text" class="form-control" name="no_trans_file" id="non_tra" disabled />
         </div>
       </div>
+      <div class="form-group mid-data">
+        
+        <!-- Post process file field -->
+        <label for="post_proc" class="col-xs-3">Replace translations file:</label>
+        <div class="col-xs-7">
+          <input type="text" class="form-control" name="post_process_file" id="post_proc" disabled />
+        </div>
+      </div>
+
       <!-- Progress status information -->
       <div id="status" class="start">
         <progress id="progBar" value="0" max="100"></progress>

@@ -9,7 +9,6 @@ class Preprocessor {
   constructor(path) {
     this._path  = path
     this._no_translate = this.readFile()
-    console.log(this.no_translate)
   }
 
   get path() {
@@ -30,10 +29,10 @@ class Preprocessor {
 
   /**
    * Reads file content synchronously
-   * @returns {Object}
+   * @returns {string[]}
    */
   readFile() {
-    return fs.readFileSync(this.path, 'utf-8')
+    return JSON.parse(fs.readFileSync(this.path, 'utf-8')).no_translate
   }
 
   /**

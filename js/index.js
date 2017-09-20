@@ -3,12 +3,15 @@
  */
 'use strict'
 
+const { dialog } = require('electron').remote
 const Oracle = require('./oracle')
 const Translate = require('./translator')
 const updater = require('./formUpdater')
 const Validator = require('./validator')
 const Preprocessor = require('./preprocessor')
 const validate = new Validator()
+const FileHandler = require('./fileHandler')
+const fh = new FileHandler()
 
 /**
  * Adds the onClick event to the Translate button to fetch and translate the data.
@@ -27,7 +30,8 @@ document.getElementById('translate').addEventListener('click', () => {
     t_lang:     document.getElementById('targ_lang').value,
     m_lang:     document.getElementById('mid_lang').value,
     max_length: document.getElementById('max_length').value,
-    non_tra:    document.getElementById('non_tra')
+    non_tra:    document.getElementById('non_tra'),
+    post_proc:  document.getElementById('post_proc')
   }
 
   /**
@@ -42,9 +46,7 @@ document.getElementById('translate').addEventListener('click', () => {
   /**
    * Preprocessor object setting
    */
-  console.log(data.non_tra)
-  console.log(data.non_tra.files[0].name)
-  const preprocessor = data.non_tra ? new Preprocessor(data.non_tra.value) : {}
+  const preprocessor = data.non_tra.value ? new Preprocessor(data.non_tra.value) : undefined
 
   /**
    * Oracle db object creation
@@ -64,55 +66,55 @@ document.getElementById('translate').addEventListener('click', () => {
   /**
   * Fetches the data from the db table using the PK and the specified field
   */
-  // ora.getDataToTranslate()
-  //   .then(res => {
-  //     /**
-  //      * Processes the fetched data converting it into an Object[] having {id, value}
-  //      */
-  //     ora.processDataArray(res.rows)
-  //       .then(tData => {
+  ora.getDataToTranslate()
+    .then(res => {
+      /**
+       * Processes the fetched data converting it into an Object[] having {id, value}
+       */
+      ora.processDataArray(res.rows)
+        .then(tData => {
 
-  //         /**
-  //          * Exclude non-translatable lines
-  //          */
-  //         const tr_data = preprocessor !== {} ? preprocessor.preProcess(tData) : tData
+          /**
+           * Exclude non-translatable lines
+           */
+          const tr_data = preprocessor !== undefined ? preprocessor.preProcess(tData) : tData
 
-  //         /**
-  //          * Translate object creation
-  //          */
-  //         const tr = new Translate(
-  //           tr_data,
-  //           data.f_lang,
-  //           updater.processLangArray(data.m_lang),
-  //           data.t_lang
-  //         )
+          /**
+           * Translate object creation
+           */
+          const tr = new Translate(
+            tr_data,
+            data.f_lang,
+            updater.processLangArray(data.m_lang),
+            data.t_lang
+          )
 
-  //         /**
-  //          * Executes the translation of every table row
-  //          */
-  //         tr.translate()
-  //           .then(translatedData => {
-  //             /**
-  //              * Creates the temporary table and updates the values according to the new translation
-  //              */
-  //             ora.outputResult(translatedData)
-  //               .then(() => {
-  //                 alert(`Translation successful. Data has been output in table ${ora.tmp}.`)
-  //                 updater.taskFinished()
-  //               })
-  //               .catch(err => {
-  //                 updater.processError(err)
-  //               })
-  //           })
-  //           .catch(err => {
-  //             updater.processError(err)
-  //           })
-  //       })
-  //       .catch(err => {
-  //         updater.processError(err)
-  //       })
-  //   })
-  //   .catch(err => {
-  //     updater.processError(err)
-  //   })
+          /**
+           * Executes the translation of every table row
+           */
+          tr.translate()
+            .then(translatedData => {
+              /**
+               * Creates the temporary table and updates the values according to the new translation
+               */
+              ora.outputResult(translatedData)
+                .then(() => {
+                  alert(`Translation successful. Data has been output in table ${ora.tmp}.`)
+                  updater.taskFinished()
+                })
+                .catch(err => {
+                  updater.processError(err)
+                })
+            })
+            .catch(err => {
+              updater.processError(err)
+            })
+        })
+        .catch(err => {
+          updater.processError(err)
+        })
+    })
+    .catch(err => {
+      updater.processError(err)
+    })
 })
