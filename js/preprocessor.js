@@ -1,14 +1,15 @@
 /**
  * Created by Yasin Radi <yasin.ben.hamman@gmail.com>
  */
-const fs = require('fs')
+const FileHandler = require('./fileHandler')
+const fh = new FileHandler()
 
 
 class Preprocessor {
 
   constructor(path) {
     this._path  = path
-    this._no_translate = this.readFile()
+    this._no_translate = this.readNonTranslate()
   }
 
   get path() {
@@ -28,11 +29,11 @@ class Preprocessor {
   }
 
   /**
-   * Reads file content synchronously
-   * @returns {string[]}
+   * Reads a non translations file
+   * @returns {string}
    */
-  readFile() {
-    return JSON.parse(fs.readFileSync(this.path, 'utf-8')).no_translate
+  readNonTranslate() {
+    return fh.readFile(this.path).no_translation
   }
 
   /**
