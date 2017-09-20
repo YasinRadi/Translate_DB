@@ -9,6 +9,7 @@ const Translate = require('./translator')
 const updater = require('./formUpdater')
 const Validator = require('./validator')
 const Preprocessor = require('./preprocessor')
+const Postprocessor = require('./postProcessor')
 const validate = new Validator()
 const FileHandler = require('./fileHandler')
 const fh = new FileHandler()
@@ -47,6 +48,11 @@ document.getElementById('translate').addEventListener('click', () => {
    * Preprocessor object setting
    */
   const preprocessor = data.non_tra.value ? new Preprocessor(data.non_tra.value) : undefined
+
+  /**
+   * Postprocessor object setting
+   */
+  const postprocessor = data.post_proc.value ? new Postprocessor(data.post_proc.value) : undefined
 
   /**
    * Oracle db object creation
@@ -94,6 +100,12 @@ document.getElementById('translate').addEventListener('click', () => {
            */
           tr.translate()
             .then(translatedData => {
+
+              /**
+               * Perform post-translation operations
+               */
+              const translated_data = postprocessor !== undefined ? postprocessor.postProcess(translatedData) : translatedData
+
               /**
                * Creates the temporary table and updates the values according to the new translation
                */

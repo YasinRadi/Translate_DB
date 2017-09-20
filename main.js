@@ -11,9 +11,9 @@ function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 1300,
-    height: 880,
+    height: 1030,
     minWidth: 1300,
-    minHeight: 880
+    minHeight: 1030
   })
 
   // and load the index.html of the app.

@@ -2,11 +2,12 @@
  * Created by Yasin Radi <yasin.ben.hamman@gmail.com>
  */
 const { dialog } = require('electron').remote
-const Validator  = require('./validator')
-const validate   = new Validator()
+const fs = require('fs')
+const Validator = require('./validator')
+const validate = new Validator()
 
 class FileHandler {
-  
+
   constructor() {
     this._files = []
   }
@@ -20,17 +21,28 @@ class FileHandler {
   }
 
   /**
+   * Reads file content synchronously
+   * @returns {string[]}
+   */
+  readFile(path) {
+    return JSON.parse(fs.readFileSync(path, 'utf-8'))
+  }
+
+  /**
    * 
    * @param {*} field 
    */
   setOpeningFunction(field) {
-    dialog.showOpenDialog({filters: [
-      { extensions: ['json'] }
-    ]}, (files) => {
-      if(typeof files !== undefined) {
-        document.getElementById(field).value = files[0]
-      }
-    })
+    dialog.showOpenDialog(
+      {
+        filters: [
+          { name: 'JSON Files', extensions: ['json'] }
+        ]
+      }, (files) => {
+        if (files) {
+          document.getElementById(field).value = files[0]
+        }
+      })
   }
 }
 

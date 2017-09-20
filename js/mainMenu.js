@@ -10,12 +10,14 @@ const menu = Menu.buildFromTemplate([
     submenu: [
       {
         label: 'Open Non translations file...',
+        accelerator: process.platform === 'darwin' ? 'Command+T' : 'Ctrl+T',
         click: () => {
           fh.setOpeningFunction('non_tra')
         }
       },
       {
         label: 'Open Replace translations file...',
+        accelerator: process.platform === 'darwin' ? 'Command+R' : 'Ctrl+R',
         click: () => {
           fh.setOpeningFunction('post_proc')
         }
@@ -25,7 +27,7 @@ const menu = Menu.buildFromTemplate([
       },
       {
         label: 'Reload',
-        accelerator: process.platform === 'darwin' ? 'Command+R' : 'Ctrl+R',
+        accelerator: process.platform === 'darwin' ? 'Command+D' : 'Ctrl+D',
         role: 'reload'
       },
       {
