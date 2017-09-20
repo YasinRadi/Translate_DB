@@ -1,11 +1,28 @@
 'use strict'
 
 const { Menu, dialog } = require('electron').remote
+const FileHandler = require('./fileHandler')
+const fh = new FileHandler()
 
 const menu = Menu.buildFromTemplate([
   {
     label: 'File',
     submenu: [
+      {
+        label: 'Open Non translations file...',
+        click: () => {
+          fh.setOpeningFunction('non_tra')
+        }
+      },
+      {
+        label: 'Open Replace translations file...',
+        click: () => {
+          fh.setOpeningFunction('post_proc')
+        }
+      },
+      {
+        type: 'separator'
+      },
       {
         label: 'Reload',
         accelerator: process.platform === 'darwin' ? 'Command+R' : 'Ctrl+R',
