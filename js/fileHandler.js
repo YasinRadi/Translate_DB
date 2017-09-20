@@ -1,6 +1,8 @@
 /** 
  * Created by Yasin Radi <yasin.ben.hamman@gmail.com>
  */
+'use strict'
+
 const { dialog } = require('electron').remote
 const fs = require('fs')
 const Validator = require('./validator')
@@ -25,12 +27,12 @@ class FileHandler {
    * @returns {string[]}
    */
   readFile(path) {
-    return JSON.parse(fs.readFileSync(path, 'utf-8'))
+    return JSON.parse(fs.readFileSync(path, 'latin1'))
   }
 
   /**
-   * 
-   * @param {*} field 
+   * Opens the browser dialog and sets the related field with the file path.
+   * @param {string} field 
    */
   setOpeningFunction(field) {
     dialog.showOpenDialog(
