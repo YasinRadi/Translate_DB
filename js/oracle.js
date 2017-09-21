@@ -158,10 +158,11 @@ class Oracle {
    */
   async getData(fields) {
     const cn = await this.connection
+    const where = this.condition === '' ? '' : `WHERE ${this.condition}`
     const numRows = await this.getRowsNum()
     return this.getRowsNum().then(data => {
       const num = data.rows[0][0]
-      return cn.execute(`SELECT ${this.processFields(fields)} FROM ${this.table} WHERE ${this.condition}`, [], { maxRows: num })
+      return cn.execute(`SELECT ${this.processFields(fields)} FROM ${this.table} ${where}`, [], { maxRows: num })
       .then(res => {
         return res
       })

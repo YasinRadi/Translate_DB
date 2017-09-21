@@ -3,5 +3,5 @@
  */
 'use strict'
 
-require('./js/index')
 require('./js/mainMenu')
+require('./js/index')
