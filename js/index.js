@@ -31,8 +31,8 @@ document.getElementById('translate').addEventListener('click', () => {
     t_lang:     document.getElementById('targ_lang').value,
     m_lang:     document.getElementById('mid_lang').value,
     max_length: document.getElementById('max_length').value,
-    non_tra:    document.getElementById('non_tra'),
-    post_proc:  document.getElementById('post_proc')
+    non_tra:    document.getElementById('non_tra').value,
+    post_proc:  document.getElementById('post_proc').value
   }
 
   /**
@@ -47,12 +47,12 @@ document.getElementById('translate').addEventListener('click', () => {
   /**
    * Preprocessor object setting
    */
-  const preprocessor = data.non_tra.value ? new Preprocessor(data.non_tra.value) : undefined
+  const preprocessor = data.non_tra ? new Preprocessor(data.non_tra) : undefined
 
   /**
    * Postprocessor object setting
    */
-  const postprocessor = data.post_proc.value ? new Postprocessor(data.post_proc.value) : undefined
+  const postprocessor = data.post_proc ? new Postprocessor(data.post_proc) : undefined
 
   /**
    * Oracle db object creation
@@ -115,18 +115,22 @@ document.getElementById('translate').addEventListener('click', () => {
                   updater.taskFinished()
                 })
                 .catch(err => {
+                  console.log(err)
                   updater.processError(err)
                 })
             })
             .catch(err => {
+              console.log(err)
               updater.processError(err)
             })
         })
         .catch(err => {
+          console.log(err)
           updater.processError(err)
         })
     })
     .catch(err => {
+      console.log(err)
       updater.processError(err)
     })
 })
