@@ -134,6 +134,7 @@ class FormUpdater {
   static processError(err) {
     div.className = 'start'
     FormUpdater.enableTranslateBtn()
+    console.log(err)
     alert(err)
   }
 }
