@@ -47,7 +47,7 @@ const fh = new FileHandler()
    * @returns {Object[]}
    */
   process(data) {
-    FormUpdater.setPostprocessText()
+    FormUpdater.setPostprocessText(data.length)
     return data.map((d) => {
       this.lines.forEach((l) => {
         d.value = d.value.replace(
