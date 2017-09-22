@@ -157,6 +157,8 @@ class Oracle {
    * @returns {Promise}
    */
   async getData(fields) {
+    updater.setProgressBar(5)
+    updater.setGatheringDataText()
     const cn = await this.connection
     const where = this.condition === '' ? '' : `WHERE ${this.condition}`
     const numRows = await this.getRowsNum()
@@ -216,24 +218,18 @@ class Oracle {
    */
   async outputResult(processedData) {
     let updates = []
-    let promise = Promise.resolve()
     const cn = await this.connection
     await this.createTmpTable()
-    const values = processedData.filter((d) => d.value.length <= this.maxLength)      
-    updater.setProgressBar(values.length)
-    updater.setSavingText()
-    let i = 1
+    const values = processedData.filter((d) => d.value.length <= this.maxLength)
+    updater.setSavingTextNumbers(values.length)
     for (const d of values) {
-      promise = promise.then(() => cn.execute(`UPDATE ${this.tmp} SET ${this.field} = '${this.processValueQuotes(d.value)}' WHERE ${this.pk} = '${d.id}'`))
-       .then(() => cn.commit())
-       .then(() => {
-          updater.setSavingTextNumbers(i, values.length)
-          updater.updateProgressBar()
-          i++
-      }) 
+      updates.push(
+        cn.execute(`UPDATE ${this.tmp} SET ${this.field} = '${this.processValueQuotes(d.value)}' WHERE ${this.pk} = '${d.id}'`)
+        .then(() => cn.commit())
+      )
     }
 
-    return promise
+    return Promise.all(updates).then(() => updater.updateProgressBar())
   }
 
   /**

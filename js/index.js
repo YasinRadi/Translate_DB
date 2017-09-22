@@ -111,6 +111,7 @@ document.getElementById('translate').addEventListener('click', () => {
                */
               ora.outputResult(translated_data)
                 .then(() => {
+                  updater.updateProgressBar()
                   alert(`Translation successful. Data has been output in table ${ora.tmp}.`)
                   updater.taskFinished()
                 })
