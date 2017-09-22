@@ -55,7 +55,7 @@ class Preprocessor {
    * @param {string[]} data 
    */
   process(data) {
-    FormUpdater.setPreprocessText()
+    FormUpdater.setPreprocessText(data.length)
     return data.filter(this.isElementNotIncluded.bind(this))
   }
 }
