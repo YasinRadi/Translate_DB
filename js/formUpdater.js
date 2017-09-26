@@ -28,8 +28,7 @@ class FormUpdater {
    * Update the progress bar by one
    */
   static updateProgressBar() {
-    const current = bar.value
-    bar.setAttribute('value', current + 1)
+    bar.value += 1
   }
 
   /**
@@ -41,11 +40,21 @@ class FormUpdater {
 
   /**
    * Set progress status text to Translating values informing of current number
+   * @param {number} total 
+   * @param {string} lang
+   */
+  static setTranslatingTextNumbers(lang, total) {
+    txt.textContent = `Translating ${total} values to ${lang}...`
+  }
+
+  /**
+   * Set progress status text to Translating values informing of current number
+   * @param {string} lang 
    * @param {number} current 
    * @param {number} total 
    */
-  static setTranslatingTextNumbers(lang, current, total) {
-    txt.textContent = `Translating values to ${lang}... (${current} / ${total})`
+  static setTranslatingCurrentTextNumbers(lang, current, total) {
+    txt.textContent = `Translating (${current}/${total}) values to ${lang}...`
   }
 
   /**
@@ -64,25 +73,41 @@ class FormUpdater {
 
   /**
    * Set progress status text to saving values informing of current number
-   * @param {number} current 
    * @param {number} total 
    */
-  static setSavingTextNumbers(current, total) {
-    txt.textContent = `Saving values... (${current} / ${total})`
+  static setSavingTextNumbers(total) {
+    txt.textContent = `Saving ${total} values... `
   }
 
   /**
    * Set progress status text to pre-process information
+   * @param {number} length
    */
-  static setPreprocessText() {
-    txt.textContent = `Pre-processing values...`
+  static setPreprocessText(length) {
+    txt.textContent = `Pre-processing ${length} values...`
   }
 
   /**
    * Set progress status text to post-process information
+   * @param {number} length
    */
-  static setPostprocessText() {
-    txt.textContent = `Post-processing values...`
+  static setPostprocessText(length) {
+    txt.textContent = `Post-processing ${length} values...`
+  }
+
+  /**
+   * Set progress status text to formatting objects to a specific language
+   * @param {string} lang 
+   */
+  static setFormattingText(lang) {
+    txt.textContent = `Formatting ${lang} objects...`
+  }
+
+  /**
+   * Set progress status text to gathering data
+   */
+  static setGatheringDataText() {
+    txt.textContent = `Gathering data...`
   }
 
   /**

@@ -13,6 +13,7 @@ class Translator {
     this._langs = langs
     this.langs.splice(0, 0, origin === '' ? 'auto' : origin.toLowerCase())
     this.langs.push(target.toLowerCase())
+    updater.setProgressBar(this.langs.length + 1)
   }
 
   /**
@@ -38,7 +39,7 @@ class Translator {
    * Translates a data array to the desired language.
    * @returns {Promise}
    */
-  translate() {
+  async translate() {
     updater.disableTranslateBtn()
     return this.translateTo()
   }
@@ -57,28 +58,28 @@ class Translator {
   }
 
   /**
-   * Translate in a regular way
+   * Replace the value to be translated with a translation promise and bulk resolve them.
    * @returns {Promise}
    */
   translateStd(lang){
-    let result = []
-    let promise = Promise.resolve()
+    let promises = []
 
-    updater.setProgressBar(this.data.length)
-    updater.setTranslatingText()
+    updater.setTranslatingTextNumbers(this.lang.to, this.data.length)
+    updater.updateProgressBar()
     
-    let i = 1
     for (const d of this.data) {
-      promise = promise.then(() => translate(d.value, this.lang))
-        .then(res => {
-          result.push({ id: d.id, value: res.text })
-          updater.setTranslatingTextNumbers(this.lang.to, i, this.data.length)
-          updater.updateProgressBar()
-          i++
+      let _id = d.id
+      promises.push(
+        new Promise((rs, rj) => {
+          translate(d.value, this.lang).then(res => {
+            rs({id: _id, value: res.text})
+            rj('Error while translating.')
+          })
         })
+      )
     }
 
-    return promise.then(() => result)
+    return Promise.all(promises)
   }
 }
 

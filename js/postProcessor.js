@@ -4,14 +4,14 @@
 'use strict'
 
 const FileHandler = require('./fileHandler')
-const FormUpdater = require('./formUpdater')
+const updater     = require('./formUpdater')
 const fh = new FileHandler()
 
  class Postprocessor {
 
   constructor(path) {
     this._path = path
-    this._lines = this.readReplaceTranslationsFile()
+    this._lines = this.readReplaceTranslationsFile(path)
   }
 
   /**
@@ -35,19 +35,20 @@ const fh = new FileHandler()
 
   /**
    * Reads the replace translation file using the specified path and returns the array contained in it.
+   * @param   {string}   path
    * @returns {Object[]}
    */
-  readReplaceTranslationsFile() {
-    return fh.readFile(this.path).replace_translation
+  readReplaceTranslationsFile(path) {
+    return fh.readFile(path).replace_translation
   }
 
   /**
    * Replaces each specified value in the replacing file from each data row
-   * @param {Object[]} data 
+   * @param   {Object[]} data 
    * @returns {Object[]}
    */
   process(data) {
-    FormUpdater.setPostprocessText()
+    updater.setPostprocessText(data.length)
     return data.map((d) => {
       this.lines.forEach((l) => {
         d.value = d.value.replace(
