@@ -7,6 +7,9 @@ const { Menu, dialog } = require('electron').remote
 const FileHandler = require('./fileHandler')
 const fh = new FileHandler()
 
+/**
+ * Create menu from template in object[] shape
+ */
 const menu = Menu.buildFromTemplate([
   {
     label: 'File',
@@ -104,6 +107,7 @@ const menu = Menu.buildFromTemplate([
   }
 ])
 
+// Application menu setting
 Menu.setApplicationMenu(menu)
 
 class MainMenu {}

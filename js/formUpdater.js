@@ -28,8 +28,7 @@ class FormUpdater {
    * Update the progress bar by one
    */
   static updateProgressBar() {
-    const current = bar.value
-    bar.setAttribute('value', current + 1)
+    bar.value += 1
   }
 
   /**
@@ -42,9 +41,20 @@ class FormUpdater {
   /**
    * Set progress status text to Translating values informing of current number
    * @param {number} total 
+   * @param {string} lang
    */
   static setTranslatingTextNumbers(lang, total) {
     txt.textContent = `Translating ${total} values to ${lang}...`
+  }
+
+  /**
+   * Set progress status text to Translating values informing of current number
+   * @param {string} lang 
+   * @param {number} current 
+   * @param {number} total 
+   */
+  static setTranslatingCurrentTextNumbers(lang, current, total) {
+    txt.textContent = `Translating (${current}/${total}) values to ${lang}...`
   }
 
   /**

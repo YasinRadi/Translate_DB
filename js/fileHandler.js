@@ -27,7 +27,7 @@ class FileHandler {
    * @returns {string[]}
    */
   readFile(path) {
-    return JSON.parse(fs.readFileSync(path, 'latin1'))
+    return JSON.parse(fs.readFileSync(path, 'utf-8'))
   }
 
   /**

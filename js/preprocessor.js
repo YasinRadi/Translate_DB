@@ -4,7 +4,7 @@
 'use strict'
 
 const FileHandler = require('./fileHandler')
-const FormUpdater = require('./formUpdater')
+const updater     = require('./formUpdater')
 const fh = new FileHandler()
 
 
@@ -12,7 +12,7 @@ class Preprocessor {
 
   constructor(path) {
     this._path  = path
-    this._no_translate = this.readNonTranslationFile()
+    this._no_translate = this.readNonTranslationFile(path)
   }
 
   /**
@@ -36,27 +36,47 @@ class Preprocessor {
 
   /**
    * Reads the specified non translation file and returns the array contained
+   * @param   {string}  path
    * @returns {string[]}
    */
-  readNonTranslationFile() {
-    return fh.readFile(this.path).no_translation
+  readNonTranslationFile(path) {
+    return fh.readFile(path).no_translation
   }
 
   /**
    * Checks if the value of the param element is in the no_translate[]
-   * @param {Object} element 
+   * @param   {Object} element 
+   * @returns {bool}
    */
   isElementNotIncluded(element) {
     return !this.no_translate.includes(element.value)
   }
 
   /**
+   * Checks if the value of the param element is in the no_translate[]
+   * @param   {*} element 
+   * @returns {bool}
+   */
+  isElementIncluded(element) {
+    return this.no_translate.includes(element.value)
+  }
+
+  /**
    * Filter out data that should not be translated
-   * @param {string[]} data 
+   * @param   {string[]} data 
+   * @returns {Object}
    */
   process(data) {
-    FormUpdater.setPreprocessText(data.length)
+    updater.setPreprocessText(data.length)
     return data.filter(this.isElementNotIncluded.bind(this))
+  }
+
+  /**
+   * Filter out data that should be translated
+   * @param {Object[]} data 
+   */
+  processLeftOvers(data) {
+    return data.filter(this.isElementIncluded.bind(this))
   }
 }
 
