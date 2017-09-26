@@ -13,6 +13,7 @@ const Postprocessor = require('./postprocessor')
 const FileHandler   = require('./fileHandler')
 const validator = new Validator()
 const fh = new FileHandler()
+const numberOfTransactions = 3
 
 class Index {
 
@@ -83,7 +84,7 @@ class Index {
         this.ora = this.setOraObject()
   
         // Set and update progress ui
-        updater.setProgressBar(3)
+        updater.setProgressBar(numberOfTransactions)
         updater.setGatheringDataText()
         // Disable Translate button
         updater.disableTranslateBtn()
