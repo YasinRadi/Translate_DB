@@ -40,7 +40,6 @@ class Translator {
    * @returns {Promise}
    */
   async translate() {
-    updater.disableTranslateBtn()
     return this.translateTo()
   }
 
