@@ -20,12 +20,8 @@ class Oracle {
     this._connString = connString
     this._condition = condition
     this._maxLength = maxLength
-    this._tmpExists = false
 
-
-    /**
-     * Setup connection
-     */
+    // Setup connection
     this._connection = this.connect()
   }
 
@@ -138,9 +134,9 @@ class Oracle {
 
   /**
    * Performs a connection to the db using the specified user, password and connection string.
-   * @param {String} user 
-   * @param {String} pass 
-   * @param {String} cnString 
+   * @param   {String} user 
+   * @param   {String} pass 
+   * @param   {String} cnString 
    * @returns {Promise}
    */
   connect() {
@@ -153,11 +149,11 @@ class Oracle {
 
   /**
    * Gets data from db executing a SELECT query.
-   * @param {String[]} fields  
+   * @param   {String[]} fields  
    * @returns {Promise}
    */
   async getData(fields) {
-    updater.setProgressBar(5)
+    updater.setProgressBar(3)
     updater.setGatheringDataText()
     const cn = await this.connection
     const where = this.condition === '' ? '' : `WHERE ${this.condition}`
@@ -222,6 +218,7 @@ class Oracle {
     await this.createTmpTable()
     const values = processedData.filter((d) => d.value.length <= this.maxLength)
     updater.setSavingTextNumbers(values.length)
+    updater.updateProgressBar()
     for (const d of values) {
       updates.push(
         cn.execute(`UPDATE ${this.tmp} SET ${this.field} = '${this.processValueQuotes(d.value)}' WHERE ${this.pk} = '${d.id}'`)
@@ -234,7 +231,7 @@ class Oracle {
 
   /**
    * Processes a data array to take the correct shape to be translated.
-   * @param {Object[][]} data 
+   * @param   {Object[][]} data 
    * @returns {Promise}
    */
   processDataArray(data) {

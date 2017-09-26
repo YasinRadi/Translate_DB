@@ -58,7 +58,7 @@ class Translator {
   }
 
   /**
-   * Translate in a regular way
+   * Replace the value to be translated with a translation promise and bulk resolve them.
    * @returns {Promise}
    */
   translateStd(lang){

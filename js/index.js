@@ -3,15 +3,15 @@
  */
 'use strict'
 
-const { dialog } = require('electron').remote
-const Oracle = require('./oracle')
-const Translate = require('./translator')
+const Oracle  = require('./oracle')
 const updater = require('./formUpdater')
-const Validator = require('./validator')
-const Preprocessor = require('./preprocessor')
+const { dialog } = require('electron').remote
+const Translate  = require('./translator')
+const Validator  = require('./validator')
+const Preprocessor  = require('./preprocessor')
 const Postprocessor = require('./postprocessor')
+const FileHandler   = require('./fileHandler')
 const validator = new Validator()
-const FileHandler = require('./fileHandler')
 const fh = new FileHandler()
 
 class Index {
@@ -67,57 +67,63 @@ class Index {
     this._translator = translator
   }
 
+  /**
+   * Sets the onClick listener on the Translate button
+   */
   init() {
     document.getElementById('translate').addEventListener('click', async () => {
       try {
-        //
+        // Get form data and generate data object
         this.data = this.setFormData()
 
-        //
+        // Validate form fields are valid
         this.validate()
         
-        //
+        // Generate oracle object from data object
         this.ora = this.setOraObject()
   
-        //
+        // Query data to translate
         const dataToTranslate = await this.ora.getDataToTranslate()
         
-        //
+        // Convert query rows into object[]
         const processedDataToTranslate = this.ora.processDataArray(dataToTranslate.rows)
   
-        //
-        this.generatePreprocessor(this.data)
+        // Generate preprocessor object using form data
+        this.preprocessor = this.generatePreprocessor(this.data)
 
-        //
+        // Preprocess data that will be translated if necessary
         const trData = this.checkPreData(processedDataToTranslate)
-  
-        //
+
+        // Generate translator object using data to translate and form data
         this.translator = this.setTranslatorObject(trData, this.data)
   
-        //
+        // Translate data to the desired language
         const translatedData = await this.translator.translate()
         
-        //
-        this.generatePostprocessor(this.data)
+        // Untranslated data to be affected by the postprocess
+        const dataToMerge = this.checkPreNotIncludedData(processedDataToTranslate)
 
-        //
-        const transData = this.checkPostData(translatedData)
+        // Marged data to be used from here
+        const allData = translatedData.concat(dataToMerge)
 
-        //
-        this.ora.outputResult(transData)
-          .then(() => {
-            updater.updateProgressBar()
-            alert(`Translation successful. Data has been output in table ${this.ora.tmp}.`)
-            updater.taskFinished()
-          }).catch(err => {
-            throw new Error(err)
-          })
+        // Generate postprocessor object using form data
+        this.postprocessor = this.generatePostprocessor(this.data)
+
+        // Postprocess data that will be put in the db table
+        const transData = this.checkPostData(allData)
+
+        // Input the translation result into the db table
+        await this.ora.outputResult(transData)
+
+        // Update progress bar status, alert the user that everything went ok and hide progress ui
+        updater.updateProgressBar()
+        alert(`Translation successful. Data has been output in table ${this.ora.tmp}.`)
+        updater.taskFinished()
       } catch(err) {
         console.log(err)
         updater.processError(err)
       }
-    })
-    
+    }) 
   }
 
   /**
@@ -144,7 +150,7 @@ class Index {
   }
 
   /**
-   * User input validation
+   * User input validation. Cuts execution flow if something is wrong.
    */
   validate() {
     const validation = validator.validate()
@@ -175,6 +181,7 @@ class Index {
   /**
    * Creates a new translator object using the form data and sets it to the class property
    * @param {string[]} tr_data 
+   * @returns {Translate}
    */
   setTranslatorObject(tr_data, data) {
     return new Translate(
@@ -187,11 +194,11 @@ class Index {
 
   /**
    * Generate preprocessor object.
-   * @param {Object}
+   * @param {Object} data
    * @returns {Preprocessor|undefined}
    */
   generatePreprocessor(data) {
-    return data.non_tra 
+    return data.non_tra !== ''
       ? new Preprocessor(data.non_tra) 
       : undefined
   }
@@ -202,7 +209,7 @@ class Index {
    * @returns {Object|undefined}
    */
   generatePostprocessor(data) {
-    return data.post_proc 
+    return data.post_proc !== ''
       ? new Postprocessor(data.post_proc) 
       : undefined
   }
@@ -210,6 +217,7 @@ class Index {
   /**
    * Checks if preprocessor has been initialized and processes the data, otherwise returns the data itself.
    * @param {Object[]} data 
+   * @returns {Object[]}
    */
   checkPreData(data) {
     return this.preprocessor !== undefined 
@@ -218,8 +226,19 @@ class Index {
   }
 
   /**
+   * Checks if preprocessor has been initialized and processes the data, otherwise returns the data itself.
+   * @param {Object[]} data 
+   */
+  checkPreNotIncludedData(data) {
+    return this.preprocessor !== undefined
+      ? this.preprocessor.processLeftOvers(data)
+      : data
+  }
+
+  /**
    * Checks if postprocessor has been initialized and processes the data, otherwise returns the data itself.
    * @param {Object[]} data 
+   * @returns {Object[]}
    */
   checkPostData(data) {
     return this.postprocessor !== undefined 
@@ -229,64 +248,3 @@ class Index {
 }
 
 module.exports = Index
-
-// /**
-//  * Adds the onClick event to the Translate button to fetch and translate the data.
-//  */
-// document.getElementById('translate').addEventListener('click', () => {
-//   /**
-//   * Fetches the data from the db table using the PK and the specified field
-//   */
-//   ora.getDataToTranslate()
-//     .then(res => {
-//       /**
-//        * Processes the fetched data converting it into an Object[] having {id, value}
-//        */
-//       ora.processDataArray(res.rows)
-//         .then(tData => {
-
-//           /**
-//            * Exclude non-translatable lines
-//            */
-//           const tr_data = preprocessor !== undefined ? preprocessor.process(tData) : tData
-
-//           /**
-//            * Executes the translation of every table row
-//            */
-//           tr.translate()
-//             .then(translatedData => {
-
-//               /**
-//                * Perform post-translation operations
-//                */
-//               const translated_data = postprocessor !== undefined ? postprocessor.process(translatedData) : translatedData
-
-//               /**
-//                * Creates the temporary table and updates the values according to the new translation
-//                */
-//               ora.outputResult(translated_data)
-//                 .then(() => {
-//                   updater.updateProgressBar()
-//                   alert(`Translation successful. Data has been output in table ${ora.tmp}.`)
-//                   updater.taskFinished()
-//                 })
-//                 .catch(err => {
-//                   console.log(err)
-//                   updater.processError(err)
-//                 })
-//             })
-//             .catch(err => {
-//               console.log(err)
-//               updater.processError(err)
-//             })
-//         })
-//         .catch(err => {
-//           console.log(err)
-//           updater.processError(err)
-//         })
-//     })
-//     .catch(err => {
-//       console.log(err)
-//       updater.processError(err)
-//     })
-// })
