@@ -4,4 +4,5 @@
 'use strict'
 
 require('./js/mainMenu')
-require('./js/index')
+const Index = require('./js/index')
+new Index().init()

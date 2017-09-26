@@ -246,7 +246,7 @@ class Oracle {
       })
     }
 
-    return Promise.resolve(output)
+    return output
   }
 
   /**

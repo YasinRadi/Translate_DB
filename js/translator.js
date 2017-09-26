@@ -39,7 +39,7 @@ class Translator {
    * Translates a data array to the desired language.
    * @returns {Promise}
    */
-  translate() {
+  async translate() {
     updater.disableTranslateBtn()
     return this.translateTo()
   }
