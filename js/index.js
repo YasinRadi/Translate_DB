@@ -82,6 +82,12 @@ class Index {
         // Generate oracle object from data object
         this.ora = this.setOraObject()
   
+        // Set and update progress ui
+        updater.setProgressBar(3)
+        updater.setGatheringDataText()
+        // Disable Translate button
+        updater.disableTranslateBtn()
+
         // Query data to translate
         const dataToTranslate = await this.ora.getDataToTranslate()
         
