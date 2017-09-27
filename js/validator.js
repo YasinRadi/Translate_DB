@@ -16,6 +16,7 @@ const o_lg  = document.getElementById('orig_lang')
 const t_lg  = document.getElementById('targ_lang')
 const len   = document.getElementById('max_length')
 const mid   = document.getElementById('mid_lang')
+const where = document.getElementById('condition')
 const elements = [table, field, tmp, pk, t_lg, len]
 
 /**
@@ -32,6 +33,7 @@ let msgs = {
   tbl_tmp: 'Table and Output table cannot be the same.',
   mid_arr: 'Mid languages must be valid language codes separated by commas.',
   lang_ms: '',
+  wher_ms: `Where condition field cannot contain ';'`
 }
 
 class Validator {
@@ -61,6 +63,10 @@ class Validator {
 
     if (!this.isMidLangArrayValid()) {
       return msgs.mid_arr
+    }
+
+    if(this.isConditionInvalid()) {
+      return msgs.wher_ms
     }
 
     return true
@@ -132,6 +138,16 @@ class Validator {
   checkExtension(path) {
     return path.replace(/^.*(\\|\/|\:)/, '')
       .split('.')[1] === 'json'
+  }
+
+  /**
+   * Checks if where condition contains an invalid character.
+   * @returns {bool}
+   */
+  isConditionInvalid() {
+    return where.value !== ''
+      ? where.value.includes(';')
+      : false
   }
 }
 
