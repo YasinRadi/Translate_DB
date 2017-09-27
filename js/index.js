@@ -78,7 +78,9 @@ class Index {
         this.data = this.setFormData()
 
         // Validate form fields are valid
-        this.validate()
+        if(!this.validate()) {
+          return
+        }
         
         // Generate oracle object from data object
         this.ora = this.setOraObject()
@@ -157,14 +159,17 @@ class Index {
   }
 
   /**
-   * User input validation. Cuts execution flow if something is wrong.
+   * User input validation.
+   * @returns {bool}
    */
   validate() {
     const validation = validator.validate()
     if(typeof validation === 'string') {
       alert(validation)
-      return
+      return false
     }
+
+    return true
   }
 
   /**
