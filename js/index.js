@@ -244,7 +244,7 @@ class Index {
   checkPreNotIncludedData(data) {
     return this.preprocessor !== undefined
       ? this.preprocessor.processLeftOvers(data)
-      : data
+      : []
   }
 
   /**
