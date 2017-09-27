@@ -62,13 +62,28 @@ class Preprocessor {
   }
 
   /**
+   * Remove bracket starting from string.
+   * @param   {Object[]} data 
+   * @returns {Object[]}
+   */
+  trimBrackets(data) {
+    return data.map(d => {
+      d.value = d.value.charAt(0) === '[' 
+        ? d.value.substring(5, d.value.length)
+        : d.value
+      return d
+    })
+  }
+
+  /**
    * Filter out data that should not be translated
    * @param   {string[]} data 
-   * @returns {Object}
+   * @returns {Object[]}
    */
   process(data) {
     updater.setPreprocessText(data.length)
     return data.filter(this.isElementNotIncluded.bind(this))
+                .filter(d => d.value.includes('&') && !d.value.includes(' & '))
   }
 
   /**
@@ -77,6 +92,7 @@ class Preprocessor {
    */
   processLeftOvers(data) {
     return data.filter(this.isElementIncluded.bind(this))
+      .concat(data.filter(d => d.value.includes('&') && !d.value.includes(' & ')))
   }
 }
 

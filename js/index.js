@@ -96,13 +96,13 @@ class Index {
         
         // Convert query rows into object[]
         const processedDataToTranslate = this.ora.processDataArray(dataToTranslate.rows)
-  
+
         // Generate preprocessor object using form data
         this.preprocessor = this.generatePreprocessor(this.data)
 
         // Preprocess data that will be translated if necessary
         const trData = this.checkPreData(processedDataToTranslate)
-
+        
         // Generate translator object using data to translate and form data
         this.translator = this.setTranslatorObject(trData, this.data)
   
