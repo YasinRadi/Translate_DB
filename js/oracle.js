@@ -20,6 +20,7 @@ class Oracle {
     this._connString = connString
     this._condition = condition
     this._maxLength = maxLength
+    this._overflow  = 0
 
     // Setup connection
     this._connection = this.connect()
@@ -132,6 +133,14 @@ class Oracle {
     this._tmpExists = tmpExists
   }
 
+  get overflow() {
+    return this._overflow
+  }
+
+  set overflow(overflow) {
+    this._overflow = overflow
+  }
+
   /**
    * Performs a connection to the db using the specified user, password and connection string.
    * @param   {String} user 
@@ -213,7 +222,7 @@ class Oracle {
     let updates = []
     const cn = await this.connection
     await this.createTmpTable()
-    const values = processedData.filter((d) => d.value.length <= this.maxLength)
+    const values = processedData.filter(this.processOverflow.bind(this))
     updater.setSavingTextNumbers(values.length)
     updater.updateProgressBar()
     for (const d of values) {
@@ -259,6 +268,19 @@ class Oracle {
     return fields.reduce((a, b) => a + ", " + b, "")
       .toString()
       .slice(1)
+  }
+
+  /**
+   * Check if data is outside column boundaries and keep its number
+   * @param {*} data 
+   */
+  processOverflow(data) {
+    if(data.value.length <= this.maxLength) {
+      return true
+    }
+
+    this.overflow++
+    return false
   }
 
   /**

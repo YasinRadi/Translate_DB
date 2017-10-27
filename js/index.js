@@ -36,54 +36,22 @@ class Index {
     this._data = data
   }
 
-  get preprocessor() {
-    return this._preprocessor
-  }
-
-  set preprocessor(preprocessor) {
-    this._preprocessor = preprocessor
-  }
-
-  get postprocessor() {
-    return this._postprocesor
-  }
-
-  set postprocessor(postprocessor) {
-    this._postprocesor = postprocessor
-  }
-
-  get ora() {
-    return this._ora
-  }
-
-  set ora(ora) {
-    this._ora = ora
-  }
-
-  get translator() {
-    return this._translator
-  }
-
-  set translator(translator) {
-    this._translator = translator
-  }
-
   /**
    * Sets the onClick listener on the Translate button
    */
   init() {
     document.getElementById('translate').addEventListener('click', async () => {
       try {
-        // Get form data and generate data object
-        this.data = this.setFormData()
-
         // Validate form fields are valid
         if(!this.validate()) {
           return
         }
-        
+
+        // Get form data and generate data object
+        const data = this.setFormData()
+
         // Generate oracle object from data object
-        this.ora = this.setOraObject()
+        const ora = this.setOraObject(data)
   
         // Set and update progress ui
         updater.setProgressBar(numberOfTransactions)
@@ -92,41 +60,42 @@ class Index {
         updater.disableTranslateBtn()
 
         // Query data to translate
-        const dataToTranslate = await this.ora.getDataToTranslate()
+        const dataToTranslate = await ora.getDataToTranslate()
         
         // Convert query rows into object[]
-        const processedDataToTranslate = this.ora.processDataArray(dataToTranslate.rows)
+        const processedDataToTranslate = ora.processDataArray(dataToTranslate.rows)
 
         // Generate preprocessor object using form data
-        this.preprocessor = this.generatePreprocessor(this.data)
+        const preprocessor = this.generatePreprocessor(data)
 
         // Preprocess data that will be translated if necessary
-        const trData = this.checkPreData(processedDataToTranslate)
-        
+        const trData = this.checkPreData(preprocessor, processedDataToTranslate)
+
         // Generate translator object using data to translate and form data
-        this.translator = this.setTranslatorObject(trData, this.data)
-  
+        const translator = this.setTranslatorObject(trData, data)
+
         // Translate data to the desired language
-        const translatedData = await this.translator.translate()
-        
+        const translatedData = await translator.translate()
+
         // Untranslated data to be affected by the postprocess
-        const dataToMerge = this.checkPreNotIncludedData(processedDataToTranslate)
+        const dataToMerge = this.checkPreNotIncludedData(preprocessor, processedDataToTranslate)
 
         // Marged data to be used from here
         const allData = translatedData.concat(dataToMerge)
 
         // Generate postprocessor object using form data
-        this.postprocessor = this.generatePostprocessor(this.data)
+        const postprocessor = this.generatePostprocessor(data)
 
         // Postprocess data that will be put in the db table
-        const transData = this.checkPostData(allData)
+        const transData = this.checkPostData(postprocessor, allData)
 
         // Input the translation result into the db table
-        await this.ora.outputResult(transData)
+        await ora.outputResult(transData)
 
         // Update progress bar status, alert the user that everything went ok and hide progress ui
         updater.updateProgressBar()
-        alert(`Translation successful. Data has been output in table ${this.ora.tmp}.`)
+        alert(`Translation successful. Data has been output in table ${ora.tmp}.`
+        + `\n\n${ora.overflow} rows were left untouched due to column length overflow after translation.`)
         updater.taskFinished()
       } catch(err) {
         console.log(err)
@@ -176,23 +145,23 @@ class Index {
    * Creates a new oracle object using the form data.
    * @returns {Oracle}
    */
-  setOraObject() {
+  setOraObject(data) {
     return new Oracle(
-      this.data.user,
-      this.data.password,
-      this.data.connString,
-      this.data.table,
-      this.data.pk_field,
-      this.data.field,
-      this.data.tmp,
-      this.data.condition,
-      this.data.max_length
+      data.user,
+      data.password,
+      data.connString,
+      data.table,
+      data.pk_field,
+      data.field,
+      data.tmp,
+      data.condition,
+      data.max_length
     )
   }
 
   /**
    * Creates a new translator object using the form data and sets it to the class property
-   * @param {string[]} tr_data 
+   * @param   {string[]} tr_data 
    * @returns {Translate}
    */
   setTranslatorObject(tr_data, data) {
@@ -206,7 +175,7 @@ class Index {
 
   /**
    * Generate preprocessor object.
-   * @param {Object} data
+   * @param   {Object} data
    * @returns {Preprocessor|undefined}
    */
   generatePreprocessor(data) {
@@ -217,7 +186,7 @@ class Index {
 
   /**
    * Generate postprocessor object.
-   * @param {Object} data 
+   * @param   {Object} data 
    * @returns {Object|undefined}
    */
   generatePostprocessor(data) {
@@ -228,33 +197,36 @@ class Index {
 
   /**
    * Checks if preprocessor has been initialized and processes the data, otherwise returns the data itself.
-   * @param {Object[]} data 
+   * @param   {Object[]} data 
    * @returns {Object[]}
    */
-  checkPreData(data) {
-    return this.preprocessor !== undefined 
-    ? this.preprocessor.process(data) 
-    : data
+  checkPreData(preprocessor, data) {
+    const p_data = Preprocessor.staticProcess(data)
+    return preprocessor !== undefined 
+    ? preprocessor.process(p_data) 
+    : p_data
   }
 
   /**
    * Checks if preprocessor has been initialized and processes the data, otherwise returns the data itself.
-   * @param {Object[]} data 
+   * @param {Preprocessor} preprocessor
+   * @param {Object[]}     data 
    */
-  checkPreNotIncludedData(data) {
-    return this.preprocessor !== undefined
-      ? this.preprocessor.processLeftOvers(data)
+  checkPreNotIncludedData(preprocessor, data) {
+    return preprocessor !== undefined
+      ? preprocessor.processLeftOvers(data)
       : []
   }
 
   /**
    * Checks if postprocessor has been initialized and processes the data, otherwise returns the data itself.
-   * @param {Object[]} data 
+   * @param   {Postprocessor} postprocessor
+   * @param   {Object[]}      data 
    * @returns {Object[]}
    */
-  checkPostData(data) {
-    return this.postprocessor !== undefined 
-    ? this.postprocessor.process(data) 
+  checkPostData(postprocessor, data) {
+    return postprocessor !== undefined 
+    ? postprocessor.process(data) 
     : data
   }
 }

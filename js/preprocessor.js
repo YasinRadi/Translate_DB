@@ -48,7 +48,7 @@ class Preprocessor {
    * @param   {Object} element 
    * @returns {bool}
    */
-  isElementNotIncluded(element) {
+  isElementTranslatable(element) {
     return !this.no_translate.includes(element.value)
   }
 
@@ -57,7 +57,7 @@ class Preprocessor {
    * @param   {*} element 
    * @returns {bool}
    */
-  isElementIncluded(element) {
+  isElementNoTranslatable(element) {
     return this.no_translate.includes(element.value)
   }
 
@@ -66,7 +66,7 @@ class Preprocessor {
    * @param   {Object[]} data 
    * @returns {Object[]}
    */
-  trimBrackets(data) {
+  static trimBrackets(data) {
     return data.map(d => {
       d.value = d.value.charAt(0) === '[' 
         ? d.value.substring(5, d.value.length)
@@ -82,8 +82,8 @@ class Preprocessor {
    */
   process(data) {
     updater.setPreprocessText(data.length)
-    return data.filter(this.isElementNotIncluded.bind(this))
-                .filter(d => d.value.includes('&') && !d.value.includes(' & '))
+    return data.filter(this.isElementTranslatable.bind(this))
+      
   }
 
   /**
@@ -91,8 +91,18 @@ class Preprocessor {
    * @param {Object[]} data 
    */
   processLeftOvers(data) {
-    return data.filter(this.isElementIncluded.bind(this))
-      .concat(data.filter(d => d.value.includes('&') && !d.value.includes(' & ')))
+    return data.filter(this.isElementNoTranslatable.bind(this))
+      .concat(data.filter(d => d.value.includes('&')))
+  }
+
+  /**
+   * Filter out data that should not be translated without having a preprocessor file.
+   * @param {string[]} data 
+   */
+  static staticProcess(data) {
+    const filtered_data = data.filter(d => d.value !== null)
+      .filter(d => !d.value.includes('&'))
+    return Preprocessor.trimBrackets(filtered_data)
   }
 }
 

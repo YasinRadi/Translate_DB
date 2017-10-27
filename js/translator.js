@@ -13,6 +13,7 @@ class Translator {
     this._langs = langs
     this.langs.splice(0, 0, origin === '' ? 'auto' : origin.toLowerCase())
     this.langs.push(target.toLowerCase())
+    this.langs = this.langs.filter(l => l !== "")
     updater.setProgressBar(this.langs.length + 1)
   }
 
